@@ -6,7 +6,7 @@ import "./EIP20Interface.sol";
 contract Svandis is EIP20Interface {
 
     uint256 constant private MAX_UINT256 = 2**256 - 1;
-    uint256 constant public totalSupply = 400000000;
+    uint256 constant public totalSupply = 400000000000000000000000000;
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed;
     
