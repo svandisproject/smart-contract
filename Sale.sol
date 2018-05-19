@@ -62,6 +62,6 @@ contract Sale is Svandis {
     function buyTokens() public payable returns (bool success){
         uint256 quantity = (msg.value * preSaleRate)/10^18;
         require(quantity <= allowed[this][msg.sender]);
-        transfer(this, msg.sender, quantity);
+        transferFrom(this, msg.sender, quantity);
     }
 }
