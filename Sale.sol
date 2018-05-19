@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.19;
 
 import "./Svandis.sol";
 
@@ -63,6 +63,5 @@ contract Sale is Svandis {
         uint256 quantity = (msg.value * preSaleRate)/10^18;
         require(quantity <= allowed[this][msg.sender]);
         transfer(this, msg.sender, quantity);
-        Transfer(this, msg.sender, quantity);
     }
 }
