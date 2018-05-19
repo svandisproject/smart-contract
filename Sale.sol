@@ -61,12 +61,13 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public payable returns (bool success){
+        uint256 quantity;
         if (currentTier == 0) {
-            uint256 quantity = (msg.value * preSaleRate)/10^18;
+             quantity = (msg.value * preSaleRate)/10^18;
         } else if (currentTier == 1) {
-            uint256 quantity = (msg.value * tier1Rate)/10^18;
+            quantity = (msg.value * tier1Rate)/10^18;
         } else if (currentTier == 2) {
-            uint256 quantity = (msg.value * tier2Rate)/10^18;
+            quantity = (msg.value * tier2Rate)/10^18;
         }
 
         require(quantity <= allowed[this][msg.sender]);
