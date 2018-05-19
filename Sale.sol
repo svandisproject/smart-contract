@@ -51,6 +51,7 @@ contract Sale is Svandis {
 
     function switchTiers(uint8 _tier) public onlyOwner returns (bool success) {
         require(_tier == 1 || _tier == 2);
+        require(_tier > currentTier);
         currentTier = _tier;
         return true;
     }
@@ -60,9 +61,15 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public payable returns (bool success){
-        uint256 quantity = (msg.value * preSaleRate)/10^18;
+        if (currentTier == 0) {
+            uint256 quantity = (msg.value * preSaleRate)/10^18;
+        } else if (currentTier == 1) {
+            uint256 quantity = (msg.value * tier1Rate)/10^18;
+        } else if (currentTier == 2) {
+            uint256 quantity = (msg.value * tier2Rate)/10^18;
+        }
+
         require(quantity <= allowed[this][msg.sender]);
-        transfer(this, msg.sender, quantity);
-        Transfer(this, msg.sender, quantity);
+        transferFrom(this, msg.sender, quantity);
     }
 }
