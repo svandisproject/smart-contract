@@ -11,7 +11,7 @@ contract Sale is Svandis {
     uint8 public currentTier = 0;
     uint256 public preSaleRate;
     
-    function Sale() {
+    constructor() public {
         owner = msg.sender;
         balances[this] = totalSupply;
     }
@@ -32,7 +32,7 @@ contract Sale is Svandis {
         return true;
     }
 
-    function checkWhitelisted(address _whitelisted) public onlyOwner returns (uint256 quantity) {
+    function checkWhitelisted(address _whitelisted) public view onlyOwner returns (uint256 quantity) {
         return allowed[this][_whitelisted];
     }
 
@@ -60,7 +60,7 @@ contract Sale is Svandis {
         revert();
     }
 
-    function buyTokens() public payable returns (bool success){
+    function buyTokens() public payable {
         uint256 quantity;
         if (currentTier == 0) {
              quantity = (msg.value * preSaleRate)/10^18;
