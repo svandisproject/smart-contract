@@ -61,7 +61,7 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public payable returns (bool success){
-        uint256 quantity
+        uint256 quantity;
         if (currentTier == 0) {
             quantity = (msg.value * preSaleRate)/10^18;
         } else if (currentTier == 1) {
