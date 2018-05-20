@@ -10,6 +10,7 @@ contract Sale is Svandis {
     bool public tiersSet = false;
     uint8 public currentTier = 0;
     uint256 public preSaleRate;
+    mapping(uint8 => uint256) public tierToRates;
     
     constructor() public {
         owner = msg.sender;
@@ -37,14 +38,14 @@ contract Sale is Svandis {
     }
 
     function setPreSaleRate(uint256 _preSaleRate) public onlyOwner returns (bool success) {
-        preSaleRate = _preSaleRate;
+        tierToRates[0] = _preSaleRate;
         return true;
     }
 
     function setTiers(uint256 _tier1Rate, uint256 _tier2Rate) public onlyOwner returns (bool success) {
         require (tiersSet == false);
-        tier1Rate = _tier1Rate;
-        tier2Rate = _tier2Rate;
+        tierToRates[1] = _tier1Rate;
+        tierToRates[2] = _tier2Rate;
         tiersSet = true;
         return true;
     }
@@ -61,15 +62,8 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public payable {
-        uint256 quantity;
-        if (currentTier == 0) {
-            quantity = (msg.value * preSaleRate)/10^18;
-        } else if (currentTier == 1) {
-            quantity = (msg.value * tier1Rate)/10^18;
-        } else if (currentTier == 2) {
-            quantity = (msg.value * tier2Rate)/10^18;
-        }
-
+        uint256 quantity = (msg.value * tierToRates[currentTier])/10^18;
+        
         require(quantity <= allowed[this][msg.sender]);
         transfer(msg.sender, quantity);
     }
