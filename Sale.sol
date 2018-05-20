@@ -70,6 +70,6 @@ contract Sale is Svandis {
         }
 
         require(quantity <= allowed[this][msg.sender]);
-        transferFrom(this, msg.sender, quantity);
+        transfer(msg.sender, quantity);
     }
 }
