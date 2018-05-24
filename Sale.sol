@@ -23,6 +23,11 @@ contract Sale is Svandis {
         _;
     }
 
+    modifier saleOngoing {
+        require(enableSale == true);
+        _;   
+    }
+
     function disableSale() public onlyOwner returns (bool success){
         enableSale = false;
         return true;
@@ -73,8 +78,7 @@ contract Sale is Svandis {
         revert();
     }
 
-    function buyTokens() public payable {
-        require (enableSale == true);
+    function buyTokens() public saleOngoing payable {
         uint256 quantity = (msg.value * tierToRates[currentTier])/10^18;
         
         require(quantity <= allowed[this][msg.sender]);
