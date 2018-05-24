@@ -33,6 +33,10 @@ contract Sale is Svandis {
         return true;
     }
 
+    function getContractEth public onlyOwner returns (uint256 value) {
+        return address(this).balance;
+    }
+
     function withdraw(uint256 _amount) public onlyOwner returns (bool success){
         require(_amount <= address(this).balance);
         owner.transfer(_amount);
