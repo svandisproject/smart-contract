@@ -9,6 +9,7 @@ contract Sale is Svandis {
     uint256 public tier2Rate;
     bool public tiersSet = false;
     uint8 public currentTier = 0;
+    bool private enableSale = true;
     uint256 public preSaleRate;
     mapping(uint8 => uint256) public tierToRates;
     
@@ -20,6 +21,17 @@ contract Sale is Svandis {
     modifier onlyOwner {
         require(owner == msg.sender);
         _;
+    }
+
+    function disableSale() public onlyOwner returns (bool success){
+        enableSale = false;
+        return true;
+    }
+
+    function withdraw(uint256 _amount) public onlyOwner returns (bool success){
+        require(_amount <= address(this).balance);
+        owner.transfer(_amount);
+        return true;
     }
     
     function addToWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
@@ -62,6 +74,7 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public payable {
+        require (enableSale == true);
         uint256 quantity = (msg.value * tierToRates[currentTier])/10^18;
         
         require(quantity <= allowed[this][msg.sender]);
