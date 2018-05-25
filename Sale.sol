@@ -5,6 +5,7 @@ import "./Svandis.sol";
 contract Sale is Svandis {
     
     address owner;
+    address withdrawWallet;
     uint256 public tier1Rate;
     uint256 public tier2Rate;
     bool public tiersSet = false;
@@ -23,9 +24,20 @@ contract Sale is Svandis {
         _;
     }
 
+    modifier onlyWithdrawWallet {
+        require(withdrawWallet == msg.sender);
+        _;
+    }
+
     modifier saleOngoing {
         require(enableSale == true);
         _;   
+    }
+
+    function setWithdrawWallet(address _withdrawalAddress) public onlyOwner returns (bool success) {
+        require (_withdrawalAddress != address(0));
+        withdrawWallet = _withdrawalAddress;
+        return true;
     }
 
     function disableSale() public onlyOwner returns (bool success){
@@ -37,9 +49,9 @@ contract Sale is Svandis {
         return address(this).balance;
     }
 
-    function withdraw(uint256 _amount) public onlyOwner returns (bool success){
+    function withdraw(uint256 _amount) public onlyWithdrawWallet returns (bool success){
         require(_amount <= address(this).balance);
-        owner.transfer(_amount);
+        withdrawWallet.transfer(_amount);
         return true;
     }
     
