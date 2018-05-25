@@ -33,7 +33,7 @@ contract Sale is Svandis {
         return true;
     }
 
-    function getContractEth public onlyOwner returns (uint256 value) {
+    function getContractEth() public view onlyOwner returns (uint256 value) {
         return address(this).balance;
     }
 
