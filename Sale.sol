@@ -12,6 +12,7 @@ contract Sale is Svandis {
     bool private enableSale = true;
     uint256 public preSaleRate;
     mapping(uint8 => uint256) public tierToRates;
+    mapping (address => uint256) public companyAllowed;
     
     constructor() public {
         owner = msg.sender;
@@ -48,14 +49,29 @@ contract Sale is Svandis {
         allowed[this][_whitelisted] = _quantity;
         return true;
     }
+
+    function addToCompanyWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
+        require(_quantity < balances[this]);
+        companyAllowed[_whitelisted] = _quantity;
+        return true;
+    }
     
     function removeFromWhitelist(address _whitelisted) public onlyOwner returns (bool success) {
         allowed[this][_whitelisted] = 0;
         return true;
     }
 
+    function removeFromCompanyWhitelist(address _whitelisted) public onlyOwner returns (bool success) {
+        companyAllowed[_whitelisted] = 0;
+        return true;
+    }
+
     function checkWhitelisted(address _whitelisted) public view onlyOwner returns (uint256 quantity) {
         return allowed[this][_whitelisted];
+    }
+
+    function checkCompanyWhitelisted(address _whitelisted) public view onlyOwner returns (uint256 quantity) {
+        return companyAllowed[_whitelisted];
     }
 
     function setPreSaleRate(uint256 _preSaleRate) public onlyOwner returns (bool success) {
@@ -87,5 +103,9 @@ contract Sale is Svandis {
         
         require(quantity <= allowed[this][msg.sender]);
         transfer(msg.sender, quantity);
+    }
+
+    function takeCompanyTokensOwnership() public saleOngoing {
+        transfer(msg.sender, companyAllowed[msg.sender]);
     }
 }
