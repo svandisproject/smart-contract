@@ -41,6 +41,7 @@ contract Sale is Svandis {
         return true;
     }
 
+    //Finalize taking tokens
     function disableSale() public onlyOwner returns (bool success){
         enableSale = false;
         return true;
