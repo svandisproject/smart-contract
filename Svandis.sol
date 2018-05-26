@@ -14,7 +14,7 @@ contract Svandis is EIP20Interface {
     
     string public name = 'Svandis';
     string public symbol = 'SVN';
-
+    string public constant version = "SVN 1.0";
 
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balances[msg.sender] >= _value);
