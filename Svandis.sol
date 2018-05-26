@@ -7,7 +7,7 @@ contract Svandis is EIP20Interface {
 
     uint256 constant private MAX_UINT256 = 2**256 - 1;
     uint256 constant public totalSupply = 400000000000000000000000000;
-    uint256 constant public DECIMALS = 18;
+    uint256 constant public decimals = 18;
 
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed;
