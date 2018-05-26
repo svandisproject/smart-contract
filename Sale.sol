@@ -57,9 +57,18 @@ contract Sale is Svandis {
     }
     
     function addToWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
-        require(_quantity < balances[this]);
+        require(_quantity <= balances[this]);
         allowed[this][_whitelisted] = _quantity;
         return true;
+    }
+
+    function addMultipleToWhitelist(address[] _whitelistedAddresses, uint256[] _quantities) public onlyOwner returns (bool success) {
+        require(_whitelistedAddresses.length == quantities.length);
+	require(buyerAddresses.length <= 100); //Limit set at 100
+        for(uint i=0; i<buyerAddresses.length; i++){
+            addToWhitelist(_whitelistedAddresses[i], _quantities[i]);
+        }
+	return true;
     }
 
     function addToCompanyWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
