@@ -64,9 +64,9 @@ contract Sale is Svandis {
     }
 
     function addMultipleToWhitelist(address[] _whitelistedAddresses, uint256[] _quantities) public onlyOwner returns (bool success) {
-        require(_whitelistedAddresses.length == quantities.length);
-	require(buyerAddresses.length <= 100); //Limit set at 100
-        for(uint i=0; i<buyerAddresses.length; i++){
+        require(_whitelistedAddresses.length == _quantities.length);
+	require(_whitelistedAddresses.length <= 100); //Limit set at 100
+        for(uint i = 0; i < _whitelistedAddresses.length; i++){
             addToWhitelist(_whitelistedAddresses[i], _quantities[i]);
         }
 	return true;
