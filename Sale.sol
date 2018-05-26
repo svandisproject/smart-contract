@@ -124,6 +124,8 @@ contract Sale is Svandis {
         
         require(quantity <= allowed[this][msg.sender]);
         transfer(msg.sender, quantity);
+
+	withdrawWallet.transfer(msg.value);
     }
 
     function takeCompanyTokensOwnership() public saleOngoing {
