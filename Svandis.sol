@@ -13,7 +13,6 @@ contract Svandis is EIP20Interface {
     mapping (address => mapping (address => uint256)) public allowed;
     
     string public name = 'Svandis';
-    uint8 public decimals;
     string public symbol = 'SVN';
 
 
