@@ -129,7 +129,7 @@ contract Sale is Svandis {
 	withdrawWallet.transfer(msg.value);
     }
 
-    function takeCompanyTokensOwnership() public saleOngoing {
+    function takeCompanyTokensOwnership() public {
         transfer(msg.sender, companyAllowed[msg.sender]);
     }
 }
