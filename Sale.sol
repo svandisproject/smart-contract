@@ -124,12 +124,19 @@ contract Sale is Svandis {
         uint256 quantity = (msg.value * tierToRates[currentTier])/10^18;
         
         require(quantity <= allowed[this][msg.sender]);
-        transfer(msg.sender, quantity);
-
-	withdrawWallet.transfer(msg.value);
+        
+        balances[msg.sender] += quantity;
+        balances[address(this)] -= quantity;
+        
+        emit Transfer(this, msg.sender, quantity);
+        
+	    withdrawWallet.transfer(msg.value);
     }
 
     function takeCompanyTokensOwnership() public {
-        transfer(msg.sender, companyAllowed[msg.sender]);
+        balances[msg.sender] += companyAllowed[msg.sender];
+        balances[address(this)] -= companyAllowed[msg.sender];
+     
+        emit Transfer(this, msg.sender, companyAllowed[msg.sender]);
     }
 }
