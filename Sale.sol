@@ -41,6 +41,7 @@ contract Sale is Svandis {
         return true;
     }
 
+    //Finalize taking tokens
     function disableSale() public onlyOwner returns (bool success){
         enableSale = false;
         return true;
@@ -57,9 +58,18 @@ contract Sale is Svandis {
     }
     
     function addToWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
-        require(_quantity < balances[this]);
+        require(_quantity <= balances[this]);
         allowed[this][_whitelisted] = _quantity;
         return true;
+    }
+
+    function addMultipleToWhitelist(address[] _whitelistedAddresses, uint256[] _quantities) public onlyOwner returns (bool success) {
+        require(_whitelistedAddresses.length == _quantities.length);
+	require(_whitelistedAddresses.length <= 100); //Limit set at 100
+        for(uint i = 0; i < _whitelistedAddresses.length; i++){
+            addToWhitelist(_whitelistedAddresses[i], _quantities[i]);
+        }
+	return true;
     }
 
     function addToCompanyWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
@@ -115,9 +125,11 @@ contract Sale is Svandis {
         
         require(quantity <= allowed[this][msg.sender]);
         transfer(msg.sender, quantity);
+
+	withdrawWallet.transfer(msg.value);
     }
 
-    function takeCompanyTokensOwnership() public saleOngoing {
+    function takeCompanyTokensOwnership() public {
         transfer(msg.sender, companyAllowed[msg.sender]);
     }
 }
