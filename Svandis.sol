@@ -49,7 +49,7 @@ contract Svandis is EIP20Interface {
         balances[_to] = balances[_to].add(_value);
         balances[_from] = balances[_from].sub(_value);
         if (allowance < MAX_UINT256) {
-            allowed[_from][msg.sender].sub(_value);
+            allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
         }
         emit Transfer(_from, _to, _value);
         return true;
