@@ -101,11 +101,10 @@ contract Sale is Svandis {
         return true;
     }
 
-    function setTiers(uint256 _tier1Rate, uint256 _tier2Rate) public onlyOwner returns (bool success) {
-        require (tiersSet == false);
+    function setTiers(uint256 _tier1Rate, uint256 _tier2Rate) public onlyOwner saleOngoing returns (bool success) {
+        tiersSet = true;
         tierToRates[1] = _tier1Rate;
         tierToRates[2] = _tier2Rate;
-        tiersSet = true;
         return true;
     }
 
@@ -121,22 +120,22 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public saleOngoing payable {
-        uint256 quantity = (msg.value * tierToRates[currentTier])/10^18;
-        
+        uint256 quantity = (msg.value * tierToRates[currentTier])/(1 ether);
         require(quantity <= allowed[this][msg.sender]);
-        
+
         balances[msg.sender] += quantity;
         balances[address(this)] -= quantity;
-        
+        allowed[this][msg.sender] -= quantity;
+
+        withdrawWallet.transfer(msg.value);
         emit Transfer(this, msg.sender, quantity);
-        
-	withdrawWallet.transfer(msg.value);
     }
 
     function takeCompanyTokensOwnership() public {
         balances[msg.sender] += companyAllowed[msg.sender];
         balances[address(this)] -= companyAllowed[msg.sender];
-     
+
         emit Transfer(this, msg.sender, companyAllowed[msg.sender]);
+        companyAllowed[msg.sender] = 0;
     }
 }
