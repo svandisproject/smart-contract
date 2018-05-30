@@ -4,14 +4,12 @@ import "./Svandis.sol";
 
 contract Sale is Svandis {
     using SafeMath for uint256;
+
     address owner;
     address withdrawWallet;
-    uint256 public tier1Rate;
-    uint256 public tier2Rate;
     bool public tiersSet = false;
     uint8 public currentTier = 0;
     bool private enableSale = true;
-    uint256 public preSaleRate;
     mapping(uint8 => uint256) public tierToRates;
     mapping (address => uint256) public companyAllowed;
     mapping (address => uint256) public contributorAllowed;
@@ -33,7 +31,7 @@ contract Sale is Svandis {
 
     modifier saleOngoing {
         require(enableSale == true);
-        _;   
+        _;
     }
 
     function setWithdrawWallet(address _withdrawalAddress) public onlyOwner returns (bool success) {
@@ -66,11 +64,11 @@ contract Sale is Svandis {
 
     function addMultipleToWhitelist(address[] _whitelistedAddresses, uint256[] _quantities) public onlyOwner returns (bool success) {
         require(_whitelistedAddresses.length == _quantities.length);
-	require(_whitelistedAddresses.length <= 100); //Limit set at 100
+        require(_whitelistedAddresses.length <= 100); //Limit set at 100
         for(uint i = 0; i < _whitelistedAddresses.length; i++){
             addToWhitelist(_whitelistedAddresses[i], _quantities[i]);
         }
-	return true;
+        return true;
     }
 
     function addToCompanyWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
@@ -121,7 +119,7 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public saleOngoing payable {
-        uint256 quantity = (msg.value * tierToRates[currentTier]).div(1 ether);
+        uint256 quantity = (msg.value.mul(tierToRates[currentTier])).div(1 ether);
         require(quantity <= contributorAllowed[msg.sender]);
 
         balances[msg.sender] = balances[msg.sender].add(quantity);
