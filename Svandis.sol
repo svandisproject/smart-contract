@@ -23,16 +23,19 @@ library SafeMath {
 
 contract Svandis is EIP20Interface {
     using SafeMath for uint256;
-    uint256 constant private MAX_UINT256 = 2**256 - 1;
-    uint256 constant public totalSupply = 400000000000000000000000000;
-    uint8 constant public decimals = 18;
+
+    string public constant symbol = 'SVN';
+    string public constant name = 'Svandis';
+    uint8 public constant decimals = 18;
+
+    string public constant version = "SVN 1.0";
+
+    uint256 public constant totalSupply = 400000000 * 10**uint256(decimals);
+
+    uint256 private constant MAX_UINT256 = 2**256 - 1;
 
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed;
-    
-    string public name = 'Svandis';
-    string public symbol = 'SVN';
-    string public constant version = "SVN 1.0";
 
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balances[msg.sender] >= _value);
