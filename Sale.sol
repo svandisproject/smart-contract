@@ -3,7 +3,7 @@ pragma solidity ^0.4.21;
 import "./Svandis.sol";
 
 contract Sale is Svandis {
-    
+    using SafeMath for uint256;
     address owner;
     address withdrawWallet;
     uint256 public tier1Rate;
@@ -14,6 +14,7 @@ contract Sale is Svandis {
     uint256 public preSaleRate;
     mapping(uint8 => uint256) public tierToRates;
     mapping (address => uint256) public companyAllowed;
+    mapping (address => uint256) public contributorAllowed;
     
     constructor() public {
         owner = msg.sender;
@@ -59,7 +60,7 @@ contract Sale is Svandis {
     
     function addToWhitelist(address _whitelisted, uint256 _quantity) public onlyOwner returns (bool success) {
         require(_quantity <= balances[this]);
-        allowed[this][_whitelisted] = _quantity;
+        contributorAllowed[_whitelisted] = _quantity;
         return true;
     }
 
@@ -79,7 +80,7 @@ contract Sale is Svandis {
     }
     
     function removeFromWhitelist(address _whitelisted) public onlyOwner returns (bool success) {
-        allowed[this][_whitelisted] = 0;
+        contributorAllowed[_whitelisted] = 0;
         return true;
     }
 
@@ -89,7 +90,7 @@ contract Sale is Svandis {
     }
 
     function checkWhitelisted(address _whitelisted) public view onlyOwner returns (uint256 quantity) {
-        return allowed[this][_whitelisted];
+        return contributorAllowed[_whitelisted];
     }
 
     function checkCompanyWhitelisted(address _whitelisted) public view onlyOwner returns (uint256 quantity) {
@@ -120,22 +121,26 @@ contract Sale is Svandis {
     }
 
     function buyTokens() public saleOngoing payable {
-        uint256 quantity = (msg.value * tierToRates[currentTier])/(1 ether);
-        require(quantity <= allowed[this][msg.sender]);
+        uint256 quantity = (msg.value * tierToRates[currentTier]).div(1 ether);
+        require(quantity <= contributorAllowed[msg.sender]);
 
-        balances[msg.sender] += quantity;
-        balances[address(this)] -= quantity;
-        allowed[this][msg.sender] -= quantity;
+        balances[msg.sender] = balances[msg.sender].add(quantity);
+        balances[address(this)] = balances[address(this)].sub(quantity);
+        contributorAllowed[msg.sender] = contributorAllowed[msg.sender].sub(quantity);
 
         withdrawWallet.transfer(msg.value);
         emit Transfer(this, msg.sender, quantity);
     }
 
     function takeCompanyTokensOwnership() public {
-        balances[msg.sender] += companyAllowed[msg.sender];
-        balances[address(this)] -= companyAllowed[msg.sender];
+        balances[msg.sender] = balances[msg.sender].add(companyAllowed[msg.sender]);
+        balances[address(this)] = balances[address(this)].sub(companyAllowed[msg.sender]);
 
         emit Transfer(this, msg.sender, companyAllowed[msg.sender]);
         companyAllowed[msg.sender] = 0;
+    }
+
+    function transferAnyEIP20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+        return EIP20Interface(tokenAddress).transfer(owner, tokens);
     }
 }
