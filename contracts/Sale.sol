@@ -35,6 +35,12 @@ contract Sale is Svandis {
         _;
     }
 
+    function setOwner(address _newOwnerAddress) public onlyOwner returns (bool success) {
+        require (_newOwnerAddress != address(0));
+        owner = _newOwnerAddress;
+        return true;
+    }
+
     function setWithdrawWallet(address _withdrawalAddress) public onlyOwner returns (bool success) {
         require (_withdrawalAddress != address(0));
         withdrawWallet = _withdrawalAddress;
